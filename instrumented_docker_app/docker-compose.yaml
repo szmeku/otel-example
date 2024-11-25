@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+#      - FLASK_DEBUG=1
+      - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4317
+      - OTEL_SERVICE_NAME=demo-service6
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8080:8080"
