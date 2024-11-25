@@ -1,4 +1,4 @@
-# OpenTelemetry Collector Demo
+# Running Collector
 
 ```shell
 docker compose up -d
@@ -20,7 +20,7 @@ curl -X POST http://localhost:4318/v1/logs -H "Content-Type: application/json" -
 curl -X POST http://localhost:4318/v1/metrics -H "Content-Type: application/json" -d '{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeMetrics":[{"metrics":[{"name":"operation_counter","gauge":{"dataPoints":[{"asDouble":1.0,"timeUnixNano":"'$TIME_NOW'","attributes":[{"key":"trace_id","value":{"stringValue":"'$TRACE_ID'"}}]}]}}]}]}]}'
 ```
 
-## demo app
+# Instrumented demo app
 ```bash
 cd instrumented_docker_app
 docker compose up -d
