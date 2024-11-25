@@ -8,19 +8,14 @@ The demo exposes the following backends:
 - Jaeger at http://0.0.0.0:16686  Distributed tracing visualization - shows request flows across services
 - Zipkin at http://0.0.0.0:9411  Alternative trace viewer with different UI/features
 - Prometheus at http://0.0.0.0:9090 Time-series metrics visualization and querying
+  - in proemeteus search for "operation_counter"
 
-Dummy traces
+Run to feed with dummy data
 ```bash
-curl -X POST http://localhost:4318/v1/traces -H "Content-Type: application/json" -d "{\"resourceSpans\":[{\"resource\":{\"attributes\":[{\"key\":\"service.name\",\"value\":{\"stringValue\":\"curl-test\"}},{\"key\":\"environment\",\"value\":{\"stringValue\":\"test\"}}]},\"scopeSpans\":[{\"spans\":[{\"name\":\"process-order\",\"kind\":1,\"startTimeUnixNano\":\"$(date +%s%N)\",\"endTimeUnixNano\":\"$(date +%s%N)\",\"traceId\":\"$(openssl rand -hex 16)\",\"spanId\":\"$(openssl rand -hex 8)\",\"attributes\":[{\"key\":\"http.method\",\"value\":{\"stringValue\":\"POST\"}},{\"key\":\"http.url\",\"value\":{\"stringValue\":\"/api/orders\"}},{\"key\":\"http.status_code\",\"value\":{\"intValue\":200}}]}]}]}]}"
-```
-
-Dummy metrics
-```bash
-curl -X POST http://localhost:4318/v1/metrics -H "Content-Type: application/json" -d '{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"curl-test"}}]},"scopeMetrics":[{"metrics":[{"name":"test_counter","sum":{"dataPoints":[{"asDouble":1.0,"timeUnixNano":"'$(date +%s%N)'"}]}}]}]}]}' 
-```
-
-Dummy logs
-# logs push
-```bash
-    curl -X POST http://localhost:4318/v1/logs -H "Content-Type: application/json" -d '{"resourceLogs":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"curl-test"}}]},"scopeLogs":[{"logRecords":[{"timeUnixNano":"'$(date +%s%N)'","severityText":"INFO","body":{"stringValue":"Test log message"}}]}]}]}'
+TRACE_ID=$(openssl rand -hex 16) && \
+TIME_NOW=$(date +%s%N) && \
+SPAN_ID=$(openssl rand -hex 8) && \
+curl -X POST http://localhost:4318/v1/traces -H "Content-Type: application/json" -d '{"resourceSpans":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeSpans":[{"spans":[{"traceId":"'$TRACE_ID'","spanId":"'$SPAN_ID'","name":"test-operation","startTimeUnixNano":"'$TIME_NOW'","endTimeUnixNano":"'$TIME_NOW'","attributes":[{"key":"custom.attr","value":{"stringValue":"test-value"}}]}]}]}]}' && \
+curl -X POST http://localhost:4318/v1/logs -H "Content-Type: application/json" -d '{"resourceLogs":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeLogs":[{"logRecords":[{"traceId":"'$TRACE_ID'","spanId":"'$SPAN_ID'","timeUnixNano":"'$TIME_NOW'","severityText":"INFO","body":{"stringValue":"Operation completed"}}]}]}]}' && \
+curl -X POST http://localhost:4318/v1/metrics -H "Content-Type: application/json" -d '{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeMetrics":[{"metrics":[{"name":"operation_counter","gauge":{"dataPoints":[{"asDouble":1.0,"timeUnixNano":"'$TIME_NOW'","attributes":[{"key":"trace_id","value":{"stringValue":"'$TRACE_ID'"}}]}]}}]}]}]}'
 ```
