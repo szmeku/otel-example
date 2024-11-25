@@ -19,12 +19,3 @@ curl -X POST http://localhost:4318/v1/traces -H "Content-Type: application/json"
 curl -X POST http://localhost:4318/v1/logs -H "Content-Type: application/json" -d '{"resourceLogs":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeLogs":[{"logRecords":[{"traceId":"'$TRACE_ID'","spanId":"'$SPAN_ID'","timeUnixNano":"'$TIME_NOW'","severityText":"INFO","body":{"stringValue":"Operation completed"}}]}]}]}' && \
 curl -X POST http://localhost:4318/v1/metrics -H "Content-Type: application/json" -d '{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"test-service"}}]},"scopeMetrics":[{"metrics":[{"name":"operation_counter","gauge":{"dataPoints":[{"asDouble":1.0,"timeUnixNano":"'$TIME_NOW'","attributes":[{"key":"trace_id","value":{"stringValue":"'$TRACE_ID'"}}]}]}}]}]}]}'
 ```
-
-# Instrumented demo app
-```bash
-cd instrumented_docker_app
-docker compose up -d
-```
-- then go to http://localhost:8080 (there should be error)
-- then go to http://0.0.0.0:16686 and find your trace/logs
-![jaeger_ui.jpg](jaeger_ui.jpg)
