@@ -25,6 +25,6 @@ curl -X POST http://localhost:4318/v1/metrics -H "Content-Type: application/json
 cd instrumented_docker_app
 docker compose up -d
 ```
-- then go to localhost:8080 (there should be error)
+- then go to http://localhost:8080 (there should be error)
 - then go to http://0.0.0.0:16686 and find your trace/logs
 ![jaeger_ui.jpg](jaeger_ui.jpg)
